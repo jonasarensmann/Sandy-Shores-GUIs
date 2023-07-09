@@ -16,7 +16,7 @@ const createAlertBinding = Make("BindableEvent", {
 	Parent: Folder,
 });
 
-createAlertBinding.Event.Connect((player: Player | "all", type: string, title: string, message: string) => {
-	if (player !== "all") createAlert.FireClient(player, type, title, message);
-	else createAlert.FireAllClients(type, title, message);
+createAlertBinding.Event.Connect((player: Player | "all", alertType: string, title: string, message: string) => {
+	if (player !== "all") createAlert.FireClient(player, alertType, title, message);
+	else createAlert.FireAllClients(alertType, title, message);
 });

@@ -16,10 +16,3 @@ function mount() {
 }
 
 mount();
-
-const RemoteEvent = ReplicatedStorage.FindFirstChild("GuiEvents")!.FindFirstChild("createAlert") as RemoteEvent;
-
-RemoteEvent.OnClientEvent.Connect((type: string, title: string, message: string) => {
-	Alerts.push({ type, title, message });
-	mount();
-});
