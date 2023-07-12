@@ -16,7 +16,14 @@ const createAlertBinding = Make("BindableEvent", {
 	Parent: Folder,
 });
 
-createAlertBinding.Event.Connect((player: Player | "all", alertType: string, title: string, message: string) => {
-	if (player !== "all") createAlert.FireClient(player, alertType, title, message);
-	else createAlert.FireAllClients(alertType, title, message);
+createAlertBinding.Event.Connect((player: Player | Team | "all", title: string, alertType: string, message: string) => {
+	if (player === "all") {
+		createAlert.FireAllClients(alertType, title, message);
+	} else if (player.IsA("Team")) {
+		player.GetPlayers().forEach((plr) => {
+			createAlert.FireClient(plr, alertType, title, message);
+		});
+	} else {
+		createAlert.FireClient(player, alertType, title, message);
+	}
 });

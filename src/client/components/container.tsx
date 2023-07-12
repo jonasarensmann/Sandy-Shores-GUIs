@@ -11,6 +11,7 @@ interface props extends Roact.PropsWithChildren {
 	CloseCallback: (Element?: Frame) => void;
 	CornerRadius?: UDim;
 	HeaderHeight?: number;
+	ZIndex?: number;
 }
 
 function Container({
@@ -20,6 +21,7 @@ function Container({
 	CornerRadius,
 	HeaderHeight,
 	CloseCallback,
+	ZIndex,
 	[Roact.Children]: children,
 }: props) {
 	function closeButtonHover(button: TextButton) {
@@ -33,7 +35,7 @@ function Container({
 	const FrameRef = Roact.createRef<Frame>();
 
 	task.spawn(() => {
-		while (task.wait()) {
+		while (task.wait(0.01)) {
 			if (FrameRef.getValue() !== undefined) {
 				const Frame = FrameRef.getValue()!;
 				commonModule.invisibleChildren(Frame);
@@ -44,7 +46,14 @@ function Container({
 	});
 
 	return (
-		<frame Size={Size} Position={Position} BackgroundColor3={Color3.fromRGB(255, 255, 255)} Ref={FrameRef}>
+		<frame
+			Size={Size}
+			Position={Position}
+			BackgroundColor3={Color3.fromRGB(255, 255, 255)}
+			BackgroundTransparency={1}
+			Ref={FrameRef}
+			ZIndex={ZIndex ?? 1}
+		>
 			<Shadow Small />
 			<uigradient Rotation={-90} Color={config.DefaultColorSequence} />
 			<uicorner CornerRadius={CornerRadius ?? new UDim(0.15, 0)} />
@@ -52,6 +61,7 @@ function Container({
 				Color={Color3.fromRGB(255, 255, 255)}
 				ApplyStrokeMode={"Contextual"}
 				LineJoinMode={"Round"}
+				Transparency={1}
 				Thickness={1}
 			/>
 
@@ -61,6 +71,7 @@ function Container({
 				Size={new UDim2(0.8, 0, HeaderHeight ?? 0.2, 0)}
 				Position={new UDim2(0.1, 0, 0, 0)}
 				Font={Enum.Font.SourceSansBold}
+				TextTransparency={1}
 				TextScaled={true}
 				TextColor3={Color3.fromRGB(255, 255, 255)}
 			/>
@@ -72,6 +83,7 @@ function Container({
 				Position={new UDim2(0.82, 0, 0, 0)}
 				TextColor3={Color3.fromRGB(255, 255, 255)}
 				TextScaled={true}
+				TextTransparency={1}
 				Font={Enum.Font.SourceSansBold}
 				Event={{
 					MouseEnter: (Element) => closeButtonHover(Element),

@@ -24,6 +24,16 @@ function close() {
 	Blur.Destroy();
 }
 
+function check_frame(Frame: Frame) {
+	const UIStroke = Frame.FindFirstChildWhichIsA("UIStroke");
+
+	if (UIStroke && UIStroke.Thickness === -1) {
+		Frame.BackgroundTransparency = 1;
+		return;
+	}
+	TweenService.Create(Frame, new TweenInfo(0.5), { BackgroundTransparency: 0 }).Play();
+}
+
 function fadeIn(UIElement: Frame | TextButton | TextLabel | ImageLabel | ImageButton | UIStroke) {
 	if (!typeIs(UIElement, "Instance")) return;
 	if (UIElement.IsA("TextLabel") || UIElement.IsA("TextButton")) {
@@ -33,7 +43,7 @@ function fadeIn(UIElement: Frame | TextButton | TextLabel | ImageLabel | ImageBu
 		TweenService.Create(UIElement, new TweenInfo(0.5), { ImageTransparency: 0 }).Play();
 	}
 	if (UIElement.IsA("Frame")) {
-		TweenService.Create(UIElement, new TweenInfo(0.5), { BackgroundTransparency: 0 }).Play();
+		check_frame(UIElement);
 	}
 	if (UIElement.IsA("UIStroke")) {
 		TweenService.Create(UIElement, new TweenInfo(0.5), { Transparency: 0 }).Play();
@@ -146,6 +156,26 @@ function visibleChildren(UIElement: Frame | TextButton | TextLabel | ImageLabel 
 	}
 }
 
+function formatNumber(n: number) {
+	const str = tostring(n);
+	const len = str.size();
+	let result = "";
+	for (let i = 0; i < len; i++) {
+		if (i % 3 === 0 && i !== 0) {
+			result = "." + result;
+		}
+		result = str.sub(len - i, len - i) + result;
+	}
+	return result;
+}
+
+async function getMoney(player: Player) {
+	const leaderstats = player.WaitForChild("HiddenStats", 0.5) as Folder;
+	const BankMoney = leaderstats.WaitForChild("BankCash") as IntValue;
+	const WalletMoney = leaderstats.WaitForChild("WalletCash") as IntValue;
+	return formatNumber(BankMoney.Value + WalletMoney.Value);
+}
+
 const commonModule = {
 	open,
 	close,
@@ -153,6 +183,7 @@ const commonModule = {
 	fadeOut,
 	invisibleChildren,
 	visibleChildren,
+	getMoney,
 };
 
 export default commonModule;

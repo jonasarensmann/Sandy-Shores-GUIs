@@ -9,6 +9,8 @@ function app() {
 
 	const [open, setOpen] = useState(false);
 
+	const [TeamChangeUIEnabled, setTeamChangeUIEnabled] = useState(false);
+
 	return (
 		<screengui IgnoreGuiInset={true} ResetOnSpawn={false}>
 			<frame
@@ -43,7 +45,7 @@ function app() {
 						Image={"rbxassetid://8960947384"}
 						ScaleType={Enum.ScaleType.Fit}
 						Event={{
-							MouseButton1Click: () => {
+							MouseButton1Click: (Element) => {
 								if (!open) {
 									TweenService.Create(FrameRef.getValue()!, new TweenInfo(0.5), {
 										Position: new UDim2(0.83, 0, 0.47, 0),
@@ -107,7 +109,26 @@ function app() {
 						ScaleType={Enum.ScaleType.Fit}
 						Event={{
 							MouseButton1Click: () => {
-								return;
+								setTeamChangeUIEnabled(!TeamChangeUIEnabled);
+								if (!TeamChangeUIEnabled) {
+									const TeamChangeUI = Players.LocalPlayer.FindFirstChild("PlayerGui")?.WaitForChild(
+										"TeamChangeUI",
+										0.5,
+									) as ScreenGui;
+									const MainFrame = TeamChangeUI.WaitForChild("mainFrame") as Frame;
+									TweenService.Create(MainFrame, new TweenInfo(1), {
+										Position: new UDim2(0.5, 0, 0.5, 0),
+									}).Play();
+								} else {
+									const TeamChangeUI = Players.LocalPlayer.FindFirstChild("PlayerGui")?.WaitForChild(
+										"TeamChangeUI",
+										0.5,
+									) as ScreenGui;
+									const MainFrame = TeamChangeUI.WaitForChild("mainFrame") as Frame;
+									TweenService.Create(MainFrame, new TweenInfo(1), {
+										Position: new UDim2(0.5, 0, -0.5, 0),
+									}).Play();
+								}
 							},
 							MouseEnter: (Element) => {
 								TweenService.Create(Element!, new TweenInfo(0.1), {
@@ -128,7 +149,10 @@ function app() {
 						ScaleType={Enum.ScaleType.Fit}
 						Event={{
 							MouseButton1Click: () => {
-								return;
+								const Event = Players.LocalPlayer.WaitForChild("UIEvents")?.FindFirstChild(
+									"OpenLocatorEvent",
+								) as BindableEvent;
+								Event.Fire();
 							},
 							MouseEnter: (Element) => {
 								TweenService.Create(Element!, new TweenInfo(0.1), {
