@@ -1,6 +1,6 @@
 import Roact from "@rbxts/roact";
 import { useState, withHooks } from "@rbxts/roact-hooked";
-import { Players, TweenService } from "@rbxts/services";
+import { Players, TweenService, UserInputService } from "@rbxts/services";
 import commonModule from "client/common";
 import config from "client/config";
 
@@ -14,8 +14,8 @@ function app() {
 	return (
 		<screengui IgnoreGuiInset={true} ResetOnSpawn={false}>
 			<frame
-				Size={new UDim2(0.18, 0, 0.06, 0)}
-				Position={new UDim2(0.955, 0, 0.47, 0)}
+				Size={new UDim2(0.17, 0, 0.05, 0)}
+				Position={new UDim2(0.957, 0, 0.475, 0)}
 				BackgroundColor3={Color3.fromRGB(255, 255, 255)}
 				Ref={FrameRef}
 			>
@@ -48,12 +48,12 @@ function app() {
 							MouseButton1Click: (Element) => {
 								if (!open) {
 									TweenService.Create(FrameRef.getValue()!, new TweenInfo(0.5), {
-										Position: new UDim2(0.83, 0, 0.47, 0),
+										Position: new UDim2(0.835, 0, 0.475, 0),
 									}).Play();
 									setOpen(true);
 								} else {
 									TweenService.Create(FrameRef.getValue()!, new TweenInfo(0.5), {
-										Position: new UDim2(0.955, 0, 0.47, 0),
+										Position: new UDim2(0.957, 0, 0.475, 0),
 									}).Play();
 									setOpen(false);
 								}
@@ -77,6 +77,10 @@ function app() {
 						ScaleType={Enum.ScaleType.Fit}
 						Event={{
 							MouseButton1Click: () => {
+								const CloseEvent = Players.LocalPlayer.WaitForChild("UIEvents")?.FindFirstChild(
+									"CloseSettingsEvent",
+								) as BindableEvent;
+								CloseEvent.Fire();
 								const Event = Players.LocalPlayer.WaitForChild("UIEvents")?.FindFirstChild(
 									"OpenSettingsEvent",
 								) as BindableEvent;
@@ -149,6 +153,10 @@ function app() {
 						ScaleType={Enum.ScaleType.Fit}
 						Event={{
 							MouseButton1Click: () => {
+								const CloseEvent = Players.LocalPlayer.WaitForChild("UIEvents")?.FindFirstChild(
+									"CloseLocatorEvent",
+								) as BindableEvent;
+								CloseEvent.Fire();
 								const Event = Players.LocalPlayer.WaitForChild("UIEvents")?.FindFirstChild(
 									"OpenLocatorEvent",
 								) as BindableEvent;
