@@ -14,6 +14,7 @@ function app() {
 				Title="Location"
 				HeaderHeight={0.2}
 				CornerRadius={new UDim(0.05, 0)}
+				draggable
 				CloseCallback={(Element) => {
 					commonModule.fadeOut(Element!);
 					task.wait(0.5);

@@ -60,6 +60,7 @@ function toggle({ State, Height, Position, Width, ToggleFunc }: Props) {
 						Text={""}
 						Position={State ? new UDim2(0.4, 0, 0.1, 0) : new UDim2(0, 0, 0.1, 0)}
 						BackgroundColor3={new Color3(1, 1, 1)}
+						AutoButtonColor={false}
 						Event={{
 							MouseButton1Click: (Element) => {
 								toggleState(Element);

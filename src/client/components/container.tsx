@@ -1,4 +1,4 @@
-import { TweenService } from "@rbxts/services";
+import { TweenService, UserInputService } from "@rbxts/services";
 import Roact from "@rbxts/roact";
 import config from "client/config";
 import Shadow from "./Shadow";
@@ -12,6 +12,7 @@ interface props extends Roact.PropsWithChildren {
 	CornerRadius?: UDim;
 	HeaderHeight?: number;
 	ZIndex?: number;
+	draggable?: boolean;
 }
 
 function Container({
@@ -22,6 +23,7 @@ function Container({
 	HeaderHeight,
 	CloseCallback,
 	ZIndex,
+	draggable = false,
 	[Roact.Children]: children,
 }: props) {
 	function closeButtonHover(button: TextButton) {
@@ -42,6 +44,67 @@ function Container({
 				commonModule.fadeIn(Frame);
 				break;
 			}
+		}
+	});
+
+	let dragging = false;
+	let dragInput: InputObject;
+	let dragStart: Vector3;
+	let startPos: UDim2;
+
+	const update = (input: InputObject) => {
+		const delta = input.Position.sub(dragStart);
+		const Frame = FrameRef.getValue() as Frame;
+		Frame.TweenPosition(
+			new UDim2(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y),
+			"Out",
+			"Linear",
+			0.1,
+			true,
+		);
+	};
+
+	task.spawn(() => {
+		while (task.wait()) {
+			if (!draggable) {
+				break;
+			}
+			if (FrameRef.getValue() !== undefined) {
+				const Frame = FrameRef.getValue()!;
+				Frame.InputBegan.Connect((input: InputObject) => {
+					if (
+						input.UserInputType === Enum.UserInputType.MouseButton1 ||
+						input.UserInputType === Enum.UserInputType.Touch
+					) {
+						dragging = true;
+						dragStart = input.Position;
+						startPos = Frame.Position;
+
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						(input.Changed as RBXScriptSignal).Connect(() => {
+							if (input.UserInputState === Enum.UserInputState.End) {
+								dragging = false;
+							}
+						});
+					}
+				});
+
+				Frame.InputChanged.Connect((input: InputObject) => {
+					if (
+						input.UserInputType === Enum.UserInputType.MouseMovement ||
+						input.UserInputType === Enum.UserInputType.Touch
+					) {
+						dragInput = input;
+					}
+				});
+				break;
+			}
+		}
+	});
+
+	UserInputService.InputChanged.Connect((input: InputObject) => {
+		if (input === dragInput && dragging) {
+			update(input);
 		}
 	});
 
