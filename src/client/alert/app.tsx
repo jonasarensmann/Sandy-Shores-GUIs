@@ -60,7 +60,7 @@ function app() {
 								BackgroundTransparency={1}
 								Text={`Type: <font color="rgb(108, 155, 255)">${Alert.alertType}</font>`}
 								RichText
-								TextScaled
+								TextSize={20}
 								TextXAlignment={Enum.TextXAlignment.Left}
 								TextColor3={Color3.fromRGB(255, 255, 255)}
 								Size={new UDim2(0.95, 0, 0.4, 0)}
@@ -70,7 +70,7 @@ function app() {
 								BackgroundTransparency={1}
 								Text={`Location: <font color="rgb(66, 199, 43)">${Alert.location}</font>`}
 								RichText
-								TextScaled
+								TextSize={20}
 								TextXAlignment={Enum.TextXAlignment.Left}
 								TextColor3={Color3.fromRGB(255, 255, 255)}
 								Size={new UDim2(0.95, 0, 0.4, 0)}

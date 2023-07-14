@@ -1,6 +1,6 @@
 import Roact from "@rbxts/roact";
 import { useState, withHooks } from "@rbxts/roact-hooked";
-import { Players, TweenService, UserInputService } from "@rbxts/services";
+import { Players, TweenService } from "@rbxts/services";
 import commonModule from "client/common";
 import config from "client/config";
 
