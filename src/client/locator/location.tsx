@@ -9,7 +9,8 @@ function location() {
 		const streetNames = Workspace.WaitForChild("StreetNames") as Folder;
 
 		while (task.wait(0.5)) {
-			const HumanoidRootPart = Players.LocalPlayer.Character?.WaitForChild("HumanoidRootPart") as Part;
+			const HumanoidRootPart = Players.LocalPlayer.Character?.FindFirstChild("HumanoidRootPart") as Part;
+			if (!HumanoidRootPart) continue;
 			const ray = new Ray(HumanoidRootPart.Position, new Vector3(0, -10, 0));
 			const RayPart = Workspace.FindPartOnRayWithWhitelist(ray, streetNames.GetChildren());
 			if (RayPart[0]) setLocation(RayPart[0].Name);
