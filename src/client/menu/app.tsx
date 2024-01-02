@@ -2,11 +2,23 @@ import Roact from "@rbxts/roact";
 import { useEffect, useState, withHooks } from "@rbxts/roact-hooked";
 import Deploy from "./components/deploy";
 import Store from "./components/store";
-import Settings from "./components/settings";
-import { Lighting, Players, Workspace } from "@rbxts/services";
+import Rules from "./components/rules";
+import { Lighting, MarketplaceService, Players, Workspace } from "@rbxts/services";
+import data from "./data";
+
+function fetchGamepasses() {
+	const gamepasses: GamePassProductInfo[] = [];
+
+	data.gamepasses.forEach((gamepassid) => {
+		const gamepass = MarketplaceService.GetProductInfo(gamepassid, Enum.InfoType.GamePass);
+		gamepasses.push(gamepass);
+	});
+
+	return gamepasses;
+}
 
 function app() {
-	const [currentTab, setCurrentTab] = useState<"DEPLOY" | "STORE" | "SETTINGS">("DEPLOY");
+	const [currentTab, setCurrentTab] = useState<"DEPLOY" | "STORE" | "RULES">("DEPLOY");
 
 	const TabMarkerRef = Roact.createRef<Frame>();
 
@@ -39,6 +51,8 @@ function app() {
 		}
 	});
 
+	const [gamepasses, setGamepasses] = useState<GamePassProductInfo[]>([]);
+
 	useEffect(() => {
 		const sound = new Instance("Sound", game.GetService("SoundService"));
 		sound.SoundId = "rbxassetid://1848146134";
@@ -60,6 +74,13 @@ function app() {
 		effect.InFocusRadius = 30;
 		effect.NearIntensity = 0;
 
+		new Promise((resolve) => {
+			resolve(fetchGamepasses());
+		}).then((gamepasses: unknown) => {
+			const _gamepasses = gamepasses as GamePassProductInfo[];
+			setGamepasses(_gamepasses);
+		});
+
 		return () => {
 			sound.Destroy();
 
@@ -71,7 +92,7 @@ function app() {
 		};
 	}, []);
 
-	function switchTab(tab: "DEPLOY" | "STORE" | "SETTINGS") {
+	function switchTab(tab: "DEPLOY" | "STORE" | "RULES") {
 		setCurrentTab(tab);
 
 		TabMarker.TweenPosition(
@@ -115,8 +136,8 @@ function app() {
 								},
 							}}
 						/>
-						{/*<textbutton
-							Text="SETTINGS"
+						<textbutton
+							Text="RULES/HELP"
 							Size={new UDim2(0.2, 0, 1, 0)}
 							TextColor3={Color3.fromRGB(220, 220, 220)}
 							BackgroundTransparency={1}
@@ -124,10 +145,10 @@ function app() {
 							TextSize={32}
 							Event={{
 								MouseButton1Click: () => {
-									switchTab("SETTINGS");
+									switchTab("RULES");
 								},
 							}}
-						/>*/}
+						/>
 					</frame>
 					<frame
 						Size={new UDim2(1, 0, 0.03, 0)}
@@ -145,7 +166,13 @@ function app() {
 					</frame>
 				</frame>
 				<frame Size={new UDim2(1, 0, 0.8, 0)} Position={new UDim2(0, 0, 0.17, 0)} BackgroundTransparency={1}>
-					{currentTab === "DEPLOY" ? <Deploy /> : currentTab === "STORE" ? <Store /> : <Settings />}
+					{currentTab === "DEPLOY" ? (
+						<Deploy />
+					) : currentTab === "STORE" ? (
+						<Store gamepasses={gamepasses} />
+					) : (
+						<Rules />
+					)}
 				</frame>
 			</frame>
 		</screengui>

@@ -1,31 +1,12 @@
 import Roact from "@rbxts/roact";
 import { useEffect, useState, withHooks } from "@rbxts/roact-hooked";
 import { MarketplaceService, Players } from "@rbxts/services";
-import data from "../data";
 
-function fetchGamepasses() {
-	const gamepasses: GamePassProductInfo[] = [];
-
-	data.gamepasses.forEach((gamepassid) => {
-		const gamepass = MarketplaceService.GetProductInfo(gamepassid, Enum.InfoType.GamePass);
-		gamepasses.push(gamepass);
-	});
-
-	return gamepasses;
+interface props {
+	gamepasses: GamePassProductInfo[];
 }
 
-function store() {
-	const [gamepasses, setGamepasses] = useState<GamePassProductInfo[]>([]);
-
-	useEffect(() => {
-		new Promise((resolve) => {
-			resolve(fetchGamepasses());
-		}).then((gamepasses: unknown) => {
-			const gamepassesArray = gamepasses as GamePassProductInfo[];
-			setGamepasses(gamepassesArray);
-		});
-	}, []);
-
+function store({ gamepasses }: props) {
 	return (
 		<frame Size={new UDim2(1, 0, 1, 0)} BackgroundTransparency={1}>
 			{gamepasses.size() === 0 ? (
