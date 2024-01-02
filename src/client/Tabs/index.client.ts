@@ -1,5 +1,21 @@
-import Roact from "@rbxts/roact";
-import app from "./app";
+import Make from "@rbxts/make";
 import { Players } from "@rbxts/services";
+import main from "./mountModule";
 
-Roact.mount(Roact.createElement(app), Players.LocalPlayer!.FindFirstChildOfClass("PlayerGui")!, "Tabs");
+const OpenTabsEvent = Make("BindableEvent", {
+	Name: "OpenTabsEvent",
+	Parent: Players.LocalPlayer.WaitForChild("UIEvents"),
+});
+
+const CloseTabsEvent = Make("BindableEvent", {
+	Name: "CloseTabsEvent",
+	Parent: Players.LocalPlayer.WaitForChild("UIEvents"),
+});
+
+OpenTabsEvent.Event.Connect(() => {
+	main.mount();
+});
+
+CloseTabsEvent.Event.Connect(() => {
+	main.unmount();
+});
