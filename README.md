@@ -1,6 +1,6 @@
 # Sandy Shores
 
-Repository for [DOJ:RP Sandy Shores](www.roblox.com/games/6830111083)
+Repository for [DOJ:RP Sandy Shores](https://www.roblox.com/games/6830111083)
 
 
 ### Usage
