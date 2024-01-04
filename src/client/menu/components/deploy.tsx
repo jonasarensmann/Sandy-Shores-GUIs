@@ -1,6 +1,6 @@
 import Roact from "@rbxts/roact";
 import { withHooks } from "@rbxts/roact-hooked";
-import { Players } from "@rbxts/services";
+import { Players, ReplicatedStorage, Workspace } from "@rbxts/services";
 import Fade from "client/common/FadeModule";
 import data from "../data";
 
@@ -10,7 +10,7 @@ function deploy() {
 			<uilistlayout FillDirection={Enum.FillDirection.Horizontal} />
 			<frame Size={new UDim2(0.5, 0, 1, 0)} BackgroundTransparency={1}>
 				<textlabel
-					Size={new UDim2(1, 0, 0.05, 0)}
+					Size={new UDim2(0.7, 0, 0.05, 0)}
 					Position={new UDim2(0, 0, 0, 0)}
 					BackgroundTransparency={1}
 					TextScaled
@@ -30,7 +30,7 @@ function deploy() {
 					Text={"A true DOJ:RP experience"}
 				/>
 				<textbutton
-					Size={new UDim2(0.6, 0, 0.08, 0)}
+					Size={new UDim2(0.7, 0, 0.08, 0)}
 					Position={new UDim2(0, 0, 0.15, 0)}
 					BackgroundColor3={Color3.fromRGB(2, 171, 106)}
 					TextColor3={Color3.fromRGB(255, 255, 255)}
@@ -46,12 +46,15 @@ function deploy() {
 									"CloseMenuEvent",
 								) as BindableEvent
 							)?.Fire();
-							task.wait(1.3);
+							task.wait(0.5);
 							(
 								Players.LocalPlayer.FindFirstChild("UIEvents")?.FindFirstChild(
 									"OpenTabsEvent",
 								) as BindableEvent
 							)?.Fire();
+							(
+								ReplicatedStorage.WaitForChild("GuiEvents").FindFirstChild("deploy") as RemoteEvent
+							).FireServer();
 						},
 					}}
 				>
@@ -64,65 +67,81 @@ function deploy() {
 						ScaleType={Enum.ScaleType.Fit}
 					/>
 				</textbutton>
-			</frame>
-			<frame Size={new UDim2(0.5, 0, 1, 0)} BackgroundTransparency={1}>
-				<textlabel
-					Text={"Update Log"}
-					BackgroundTransparency={1}
-					TextColor3={Color3.fromRGB(240, 240, 240)}
-					TextScaled
-					Font={Enum.Font.GothamBold}
-					Size={new UDim2(1, 0, 0.04, 0)}
-				/>
 
-				<scrollingframe
-					Size={new UDim2(1, 0, 0.8, 0)}
-					Position={new UDim2(0, 0, 0.1, 0)}
-					BackgroundTransparency={1}
-					ScrollBarThickness={5}
-					BorderSizePixel={0}
+				<frame
+					Size={new UDim2(0.7, 0, 0.64, 0)}
+					Position={new UDim2(0, 0, 0.28, 0)}
+					BackgroundColor3={Color3.fromRGB(30, 30, 30)}
 				>
 					<uicorner CornerRadius={new UDim(0, 5)} />
-					<uilistlayout
-						FillDirection={"Vertical"}
-						HorizontalAlignment={"Center"}
-						Padding={new UDim(0.01, 0)}
+					<textlabel
+						Text={"Update Log"}
+						BackgroundTransparency={1}
+						TextColor3={Color3.fromRGB(240, 240, 240)}
+						TextScaled
+						Font={Enum.Font.GothamBold}
+						Size={new UDim2(1, 0, 0.08, 0)}
 					/>
 
-					{data.updateLogs.map((log) => {
-						return (
-							<>
-								<frame Size={new UDim2(0.9, 0, 0.1, 0)} BackgroundColor3={Color3.fromRGB(50, 50, 50)}>
-									<uicorner CornerRadius={new UDim(0, 5)} />
-									<uistroke Color={Color3.fromRGB(100, 100, 100)} Thickness={0.5} />
+					<frame
+						Size={new UDim2(0.8, 0, 0.006, 0)}
+						Position={new UDim2(0.1, 0, 0.09, 0)}
+						BackgroundColor3={Color3.fromRGB(200, 200, 200)}
+						BorderSizePixel={0}
+					/>
 
-									<textlabel
-										Text={`Update ${log.version} - ${log.date}`}
-										BackgroundTransparency={1}
-										TextColor3={Color3.fromRGB(240, 240, 240)}
-										TextScaled
-										Font={Enum.Font.GothamBold}
-										TextXAlignment={"Left"}
-										Size={new UDim2(0.9, 0, 0.2, 0)}
-										Position={new UDim2(0.05, 0, 0, 0)}
-									/>
+					<scrollingframe
+						Size={new UDim2(0.8, 0, 0.8, 0)}
+						Position={new UDim2(0.1, 0, 0.105, 0)}
+						BackgroundTransparency={1}
+						ScrollBarThickness={5}
+						BorderSizePixel={0}
+					>
+						<uicorner CornerRadius={new UDim(0, 5)} />
+						<uilistlayout
+							FillDirection={"Vertical"}
+							HorizontalAlignment={"Center"}
+							Padding={new UDim(0.01, 0)}
+						/>
 
-									<textlabel
-										Text={log.changes}
-										BackgroundTransparency={1}
-										TextColor3={Color3.fromRGB(220, 220, 220)}
-										TextSize={20}
-										Font={Enum.Font.GothamBold}
-										TextXAlignment={"Left"}
-										TextYAlignment={"Top"}
-										Size={new UDim2(0.85, 0, 0.8, 0)}
-										Position={new UDim2(0.075, 0, 0.2, 0)}
-									/>
-								</frame>
-							</>
-						);
-					})}
-				</scrollingframe>
+						{data.updateLogs.map((log) => {
+							return (
+								<>
+									<frame
+										Size={new UDim2(0.9, 0, 0.15, 0)}
+										BackgroundColor3={Color3.fromRGB(50, 50, 50)}
+									>
+										<uicorner CornerRadius={new UDim(0, 5)} />
+										<uistroke Color={Color3.fromRGB(100, 100, 100)} Thickness={0.5} />
+
+										<textlabel
+											Text={`Update ${log.version} - ${log.date}`}
+											BackgroundTransparency={1}
+											TextColor3={Color3.fromRGB(240, 240, 240)}
+											TextScaled
+											Font={Enum.Font.GothamBold}
+											TextXAlignment={"Left"}
+											Size={new UDim2(0.9, 0, 0.2, 0)}
+											Position={new UDim2(0.05, 0, 0, 0)}
+										/>
+
+										<textlabel
+											Text={log.changes}
+											BackgroundTransparency={1}
+											TextColor3={Color3.fromRGB(220, 220, 220)}
+											TextSize={20}
+											Font={Enum.Font.GothamBold}
+											TextXAlignment={"Left"}
+											TextYAlignment={"Top"}
+											Size={new UDim2(0.85, 0, 0.8, 0)}
+											Position={new UDim2(0.075, 0, 0.2, 0)}
+										/>
+									</frame>
+								</>
+							);
+						})}
+					</scrollingframe>
+				</frame>
 			</frame>
 		</frame>
 	);

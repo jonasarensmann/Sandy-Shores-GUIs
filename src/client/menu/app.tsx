@@ -3,7 +3,7 @@ import { useEffect, useState, withHooks } from "@rbxts/roact-hooked";
 import Deploy from "./components/deploy";
 import Store from "./components/store";
 import Rules from "./components/rules";
-import { Lighting, MarketplaceService, Players, Workspace } from "@rbxts/services";
+import { Lighting, MarketplaceService, Players, StarterGui, Workspace } from "@rbxts/services";
 import data from "./data";
 
 function fetchGamepasses() {
@@ -15,6 +15,12 @@ function fetchGamepasses() {
 	});
 
 	return gamepasses;
+}
+
+function getRandomSoundId() {
+	const soundIds = [1841674849, 1841652056, 9042007403, 1836681667];
+
+	return `rbxassetid://${soundIds[math.floor(math.random(0, soundIds.size()))]}`;
 }
 
 function app() {
@@ -34,28 +40,35 @@ function app() {
 	});
 
 	task.spawn(() => {
-		while (task.wait(0.05)) {
-			if (Players.LocalPlayer.Character === undefined) continue;
-			if (Workspace.CurrentCamera === undefined) continue;
-
-			const Humanoid = Players.LocalPlayer!.Character!.FindFirstChildOfClass("Humanoid");
-
-			if (Humanoid === undefined) continue;
-
-			Workspace.CurrentCamera!.CameraType = Enum.CameraType.Scriptable;
-			Workspace.CurrentCamera!.CFrame = (Workspace.FindFirstChild("camera part") as Part).CFrame;
-
-			Humanoid.WalkSpeed = 0;
-
-			break;
+		while (task.wait(0.01)) {
+			if (!Players.LocalPlayer.Neutral) {
+				if (Workspace.CurrentCamera?.CameraType === Enum.CameraType.Scriptable) {
+					Workspace.CurrentCamera!.CameraType = Enum.CameraType.Custom;
+				}
+				break;
+			}
+			if (Workspace.CurrentCamera !== undefined) {
+				Workspace.CurrentCamera!.CameraType = Enum.CameraType.Scriptable;
+			}
 		}
+	});
+
+	task.spawn(() => {
+		const Frame = Players.LocalPlayer.WaitForChild("PlayerGui")
+			.WaitForChild("JoinScreen")
+			.WaitForChild("Frame") as Frame;
+		Frame.TweenSize(new UDim2(1, 0, 0, 0), "Out", "Linear", 0.5);
+
+		task.wait(2);
+
+		Frame.Parent!.Destroy();
 	});
 
 	const [gamepasses, setGamepasses] = useState<GamePassProductInfo[]>([]);
 
 	useEffect(() => {
 		const sound = new Instance("Sound", game.GetService("SoundService"));
-		sound.SoundId = "rbxassetid://1848146134";
+		sound.SoundId = getRandomSoundId();
 		sound.Volume = 0.2;
 		sound.Looped = true;
 
@@ -74,6 +87,14 @@ function app() {
 		effect.InFocusRadius = 30;
 		effect.NearIntensity = 0;
 
+		const atmosphere = new Instance("Atmosphere", Lighting);
+		atmosphere.Color = Color3.fromRGB(100, 100, 100);
+		atmosphere.Decay = Color3.fromRGB(0, 0, 0);
+		atmosphere.Glare = 0;
+		atmosphere.Haze = 4;
+
+		StarterGui.SetCoreGuiEnabled(Enum.CoreGuiType.All, false);
+
 		new Promise((resolve) => {
 			resolve(fetchGamepasses());
 		}).then((gamepasses: unknown) => {
@@ -85,6 +106,10 @@ function app() {
 			sound.Destroy();
 
 			effect.Destroy();
+
+			atmosphere.Destroy();
+
+			StarterGui.SetCoreGuiEnabled(Enum.CoreGuiType.All, true);
 
 			Workspace.CurrentCamera!.CameraType = Enum.CameraType.Custom;
 
@@ -106,7 +131,7 @@ function app() {
 
 	return (
 		<screengui IgnoreGuiInset={true} ResetOnSpawn={false}>
-			<frame Size={new UDim2(0.6, 0, 1, 0)} Position={new UDim2(0.2, 0, 0, 0)} BackgroundTransparency={1}>
+			<frame Size={new UDim2(0.6, 0, 1, 0)} Position={new UDim2(0.05, 0, 0.03, 0)} BackgroundTransparency={1}>
 				<frame Size={new UDim2(1, 0, 0.1, 0)} Position={new UDim2(0, 0, 0.05, 0)} BackgroundTransparency={1}>
 					<frame Size={new UDim2(1, 0, 0.9, 0)} Position={new UDim2(0, 0, 0, 0)} BackgroundTransparency={1}>
 						<uilistlayout FillDirection={Enum.FillDirection.Horizontal} />

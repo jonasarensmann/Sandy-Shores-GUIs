@@ -14,7 +14,7 @@ function rules() {
 		>
 			<textlabel
 				Text={data.rules}
-				Size={new UDim2(1, 0, 2.1, 0)}
+				Size={new UDim2(1, 0, 4.0, 0)}
 				Position={new UDim2(0, 0, 0, 0)}
 				BackgroundTransparency={1}
 				TextSize={20}

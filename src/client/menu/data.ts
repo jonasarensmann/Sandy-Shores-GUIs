@@ -4,28 +4,7 @@ interface UpdateLog {
 	changes: string;
 }
 
-const updateLogs: UpdateLog[] = [
-	{
-		version: "1.0.0",
-		date: "01-02-2024",
-		changes: `Test Update Log
-- Test
-- Test
-- Test
-
-        `,
-	},
-	{
-		version: "1.0.0",
-		date: "01-02-2024",
-		changes: `Test Update Log
-- Test
-- Test
-- Test
-
-        `,
-	},
-];
+const updateLogs: UpdateLog[] = [];
 
 const gamepasses: number[] = [
 	18278551, 18283398, 18283421, 18306546, 18342315, 18342394, 18503103, 18802466, 19734286, 19734364, 19734367,

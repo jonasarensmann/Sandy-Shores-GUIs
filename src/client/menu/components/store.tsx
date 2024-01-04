@@ -1,6 +1,6 @@
 import Roact from "@rbxts/roact";
 import { useEffect, useState, withHooks } from "@rbxts/roact-hooked";
-import { MarketplaceService, Players } from "@rbxts/services";
+import { MarketplaceService, Players, ReplicatedStorage } from "@rbxts/services";
 
 interface props {
 	gamepasses: GamePassProductInfo[];
@@ -32,7 +32,7 @@ function store({ gamepasses }: props) {
 
 					{gamepasses.map((gamepass) => {
 						return (
-							<frame BackgroundColor3={Color3.fromRGB(50, 50, 50)}>
+							<frame BackgroundColor3={Color3.fromRGB(50, 50, 50)} Key={gamepass.ProductId}>
 								<uicorner CornerRadius={new UDim(0, 5)} />
 								<uistroke Color={Color3.fromRGB(100, 100, 100)} Thickness={0.5} />
 
@@ -82,10 +82,11 @@ function store({ gamepasses }: props) {
 									Position={new UDim2(0.25, 0, 0.85, 0)}
 									Event={{
 										MouseButton1Click: () => {
-											MarketplaceService.PromptGamePassPurchase(
-												Players.LocalPlayer,
-												gamepass.ProductId,
-											);
+											(
+												ReplicatedStorage.FindFirstChild("GuiEvents")?.FindFirstChild(
+													"purchaseGamepass",
+												) as RemoteEvent
+											).FireServer(gamepass.TargetId);
 										},
 									}}
 								>
